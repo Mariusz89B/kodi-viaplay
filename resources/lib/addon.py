@@ -449,7 +449,7 @@ def add_sports_event(event):
     event_info = {
         'mediatype': 'video',
         'title': details.get('title'),
-        'plot': details['synopsis'],
+        'plot': details.get('synopsis'),
         'year': int(details['production'].get('year')),
         'genre': details['format'].get('title'),
         'list_title': '[B]{0}:[/B] {1}'.format(coloring(start_time, event_status), title)
