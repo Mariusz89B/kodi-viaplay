@@ -50,8 +50,9 @@ def run():
         plugin.run()
     except helper.vp.ViaplayError as error:
         missing_cookie = 'MissingSessionCookieError'
+        persistent_login = 'PersistentLoginError'
 
-        if error.value == missing_cookie:
+        if error.value == missing_cookie or error.value == persistent_login:
             if helper.authorize():
                 plugin.run()
         else:
@@ -121,6 +122,7 @@ def generate_m3u():
 
 @plugin.route('/')
 def root():
+    helper.ensure_profile()
     pages = helper.vp.get_root_page()
     supported_pages = {
         'viaplay:root': start,

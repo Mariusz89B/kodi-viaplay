@@ -162,6 +162,12 @@ class KodiHelper(object):
         dialog.close()
         return False
 
+    def ensure_profile(self):
+        if not self.vp.get_user_id():
+            self.vp.validate_session()
+        if not self.vp.get_profile_id():
+            self.profile_dialog()
+
     def profile_dialog(self):
         profiles = self.vp.get_profiles()
         if len(profiles) == 0:
