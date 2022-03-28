@@ -182,7 +182,7 @@ class KodiHelper(object):
             current = -1
 
         index = self.dialog(dialog_type='select', heading=self.language(30068), options=names, preselect=current)
-        if index > -1:
+        if index != None:
             self.set_setting("profile_id", pids[index])
             self.log("Profile selected %s: %s" % (names[index], pids[index]))
             xbmc.executebuiltin('Container.Refresh')
