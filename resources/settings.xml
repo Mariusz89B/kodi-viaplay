@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
   <category label="30003">
     <setting id="site" type="select" label="30007" lvalues="30008|30009|30010|30011|30054|30065|30067" default="0"/>
     <setting id="user_id" type="text" default="" visible="true" enable="false" />
     <setting id="profile_id" type="text" default="" visible="true" enable="false" />
     <setting id="profile_picker" label="30068" visible="!eq(-2,)" type="action" action="RunPlugin(plugin://plugin.video.viaplay/profiles)" />
+    <setting id="log_out" label="30042" visible="!eq(-3,)" type="action" action="RunPlugin(plugin://plugin.video.viaplay/log_out)" option="close" />
 
     <setting id="subtitles" type="bool" label="30012" default="true"/>
     <setting id="first_run" type="bool" default="true" visible="false"/>

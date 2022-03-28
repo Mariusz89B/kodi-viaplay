@@ -125,7 +125,6 @@ def root():
     supported_pages = {
         'viaplay:root': start,
         'viaplay:search': search,
-        'viaplay:logout': log_out,
         'viaplay:starred': list_products,
         'viaplay:watched': list_products,
         'viaplay:purchased': list_products,
@@ -140,9 +139,6 @@ def root():
 
     for page in pages:
         page['title'] = capitalize(page['title'])
-
-        if 'logout' in page['href']:
-            page['title'] = helper.language(30042)
 
         if page['name'] in supported_pages:
             helper.add_item(page['title'], plugin.url_for(supported_pages[page['name']], url=page['href']))
