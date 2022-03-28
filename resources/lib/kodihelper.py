@@ -82,14 +82,14 @@ class KodiHelper(object):
             return "com"
         return country_code
 
-    def dialog(self, dialog_type, heading, message=None, options=None, nolabel=None, yeslabel=None, preselect=-1):
+    def dialog(self, dialog_type, heading, message=None, options=None, nolabel=None, yeslabel=None, preselect=-1, useDetails=False):
         dialog = xbmcgui.Dialog()
         if dialog_type == 'ok':
             dialog.ok(heading, message)
         elif dialog_type == 'yesno':
             return dialog.yesno(heading, message, nolabel=nolabel, yeslabel=yeslabel)
         elif dialog_type == 'select':
-            ret = dialog.select(heading, options, preselect=preselect)
+            ret = dialog.select(heading, options, preselect=preselect, useDetails=useDetails)
             if ret > -1:
                 return ret
             else:
@@ -175,16 +175,46 @@ class KodiHelper(object):
             return
 
         pids = [profile['data']['id'] for profile in profiles]
-        names = [profile['data']['name'] for profile in profiles]
+        listitems = []
+        for profile in profiles:
+            tags = []
+
+            if profile['data']['type'] == "adult":
+                tags.append(self.language(30070))
+            elif profile['data']['type'] == "child":
+                tags.append(self.language(30071))
+            else:
+                # Show unknown type without translation.
+                tags.append(profile['data']['type'].capitalize())
+
+            if profile['data']['isOwner'] == True:
+                tags.append(self.language(30072))
+            
+            if profile['data']['restricted'] == True:
+                tags.append(self.language(30073))
+
+            # No need to translate language codes.
+            if 'language' in profile['data']:
+                tags.append(profile['data']['language'].upper())
+            
+            li = xbmcgui.ListItem(
+                label=profile['data']['name'],
+                label2=', '.join(tags)
+            )
+            li.setArt({
+                'thumb': profile['embedded']['avatar']['data']['url'],
+            })
+            listitems.append(li)
+
         try:
             current = pids.index(self.vp.get_profile_id())
         except:
             current = -1
 
-        index = self.dialog(dialog_type='select', heading=self.language(30068), options=names, preselect=current)
+        index = self.dialog(dialog_type='select', heading=self.language(30068), options=listitems, preselect=current, useDetails=True)
         if index != None:
             self.set_setting("profile_id", pids[index])
-            self.log("Profile selected %s: %s" % (names[index], pids[index]))
+            self.log("Profile selected: %s" % (pids[index]))
             xbmc.executebuiltin('Container.Refresh')
 
     def get_user_input(self, heading, hidden=False):

@@ -280,3 +280,19 @@ msgstr ""
 msgctxt "#30069"
 msgid "Unable to load profiles, perhaps we're not logged in."
 msgstr ""
+
+msgctxt "#30070"
+msgid "Adult"
+msgstr ""
+
+msgctxt "#30071"
+msgid "Child"
+msgstr ""
+
+msgctxt "#30072"
+msgid "owner"
+msgstr ""
+
+msgctxt "#30073"
+msgid "age restricted"
+msgstr ""
