@@ -166,6 +166,13 @@ class Viaplay(object):
 
     def make_request(self, url, method, params=None, payload=None, headers=None):
         """Make an HTTP request. Return the response."""
+        if params == None:
+            params = {}
+        
+        pid = self.get_profile_id()
+        if pid:
+            params['profileId'] = pid
+        
         try:
             return self._make_request(url, method, params=params, payload=payload, headers=headers)
         except self.ViaplayError:
