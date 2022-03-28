@@ -105,6 +105,12 @@ class Viaplay(object):
             return "com"
         return country_code
 
+    def get_access_token(self):
+        """Reads the cookiejar to find the access token. Needed for mtg-api.com."""
+        for c in self.cookie_jar:
+            if c.name == "accessToken" and c.domain == ".viaplay.%s" % self.tld:
+                return c.value
+
     def get_user_id(self):
         return self.get_setting('user_id')
 
@@ -254,6 +260,22 @@ class Viaplay(object):
             xbmc.executebuiltin('Container.Update')
             xbmc.executebuiltin("Dialog.Close(all, true)")
             xbmc.executebuiltin("ActivateWindow(Home)")
+
+    def get_profiles(self):
+        """Return a list with profile data."""
+        uid = self.get_user_id()
+        if not uid:
+            self.validate_session()
+            uid = self.get_user_id()
+        
+        accessToken = self.get_access_token()
+        if not accessToken:
+            return []
+        
+        url = "https://viaplay.mtg-api.com/user-profiles/users/%s/profiles" % uid
+        headers = {'Authorization': "MTG-AT %s" % accessToken}
+        data = self.make_request(url=url, method="get", headers=headers)
+        return [x for x in data['embedded']['profiles']]
 
 
     def get_stream(self, guid, pincode=None, tve='false'):
