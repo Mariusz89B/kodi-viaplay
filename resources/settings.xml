@@ -6,7 +6,7 @@
     <setting id="profile_id" type="text" default="" visible="true" enable="false" />
     <setting id="profile_picker" label="30068" visible="!eq(-2,)" type="action" action="RunPlugin(plugin://plugin.video.viaplay/profiles)" />
     <setting id="log_out" label="30042" visible="!eq(-3,)" type="action" action="RunPlugin(plugin://plugin.video.viaplay/log_out)" option="close" />
-
+    <setting type="sep" />
     <setting id="subtitles" type="bool" label="30012" default="true"/>
     <setting id="first_run" type="bool" default="true" visible="false"/>
     <setting type="sep" />
