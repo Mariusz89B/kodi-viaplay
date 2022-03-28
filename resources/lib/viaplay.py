@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 A Kodi-agnostic library for Viaplay
 """
@@ -104,6 +104,20 @@ class Viaplay(object):
         if country_code == "nl":
             return "com"
         return country_code
+
+    def get_user_id(self):
+        return self.get_setting('user_id')
+
+    def get_profile_id(self):
+        return self.get_setting('profile_id')
+
+    def set_user_id(self, uid):
+        addon = self.get_addon()
+        addon.setSetting(id='user_id', value=uid)
+    
+    def set_profile_id(self, pid):
+        addon = self.get_addon()
+        addon.setSetting(id='profile_id', value=pid)
 
     def replace_cookies(self):
         cookie_file = os.path.join(self.addon_profile, 'cookie_file')
