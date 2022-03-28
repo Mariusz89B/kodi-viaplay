@@ -327,6 +327,9 @@ def channels():
         helper.add_item(helper.language(30018), plugin.url_for(channels, url=channels_dict['next_page']))
     helper.eod()
 
+@plugin.route('/profiles')
+def profiles():
+    helper.profile_dialog()
 
 @plugin.route('/log_out')
 def log_out():

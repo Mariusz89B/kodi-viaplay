@@ -82,14 +82,14 @@ class KodiHelper(object):
             return "com"
         return country_code
 
-    def dialog(self, dialog_type, heading, message=None, options=None, nolabel=None, yeslabel=None):
+    def dialog(self, dialog_type, heading, message=None, options=None, nolabel=None, yeslabel=None, preselect=-1):
         dialog = xbmcgui.Dialog()
         if dialog_type == 'ok':
             dialog.ok(heading, message)
         elif dialog_type == 'yesno':
             return dialog.yesno(heading, message, nolabel=nolabel, yeslabel=yeslabel)
         elif dialog_type == 'select':
-            ret = dialog.select(heading, options)
+            ret = dialog.select(heading, options, preselect=preselect)
             if ret > -1:
                 return ret
             else:
@@ -161,6 +161,25 @@ class KodiHelper(object):
 
         dialog.close()
         return False
+
+    def profile_dialog(self):
+        profiles = self.vp.get_profiles()
+        if len(profiles) == 0:
+            self.dialog(dialog_type='ok', heading=self.language(30068), message=self.language(30069))
+            return
+
+        pids = [profile['data']['id'] for profile in profiles]
+        names = [profile['data']['name'] for profile in profiles]
+        try:
+            current = pids.index(self.vp.get_profile_id())
+        except:
+            current = -1
+
+        index = self.dialog(dialog_type='select', heading=self.language(30068), options=names, preselect=current)
+        if index > -1:
+            self.set_setting("profile_id", pids[index])
+            self.log("Profile selected %s: %s" % (names[index], pids[index]))
+            xbmc.executebuiltin('Container.Refresh')
 
     def get_user_input(self, heading, hidden=False):
         keyboard = xbmc.Keyboard('', heading, hidden)

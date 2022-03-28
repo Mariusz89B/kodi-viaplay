@@ -272,3 +272,11 @@ msgstr "Litauiska"
 msgctxt "#30067"
 msgid "viaplay.com/nl"
 msgstr ""
+
+msgctxt "#30068"
+msgid "Select profile"
+msgstr ""
+
+msgctxt "#30069"
+msgid "Unable to load profiles, perhaps we're not logged in."
+msgstr ""
