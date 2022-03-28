@@ -231,7 +231,9 @@ class Viaplay(object):
         params = {
             'deviceKey': self.device_key
         }
-        self._make_request(url=url, method='get', params=params)
+        res = self._make_request(url=url, method='get', params=params)
+        if res and res['success'] == True:
+            self.set_user_id(res['userData']['userId'])
         return True
 
     def log_out(self):
@@ -247,8 +249,9 @@ class Viaplay(object):
             if os.path.exists(cookie_file):
                 os.remove(cookie_file)
 
+            self.set_user_id("")
+            self.set_profile_id("")
             xbmc.executebuiltin('Container.Update')
-
             xbmc.executebuiltin("Dialog.Close(all, true)")
             xbmc.executebuiltin("ActivateWindow(Home)")
 
