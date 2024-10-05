@@ -420,6 +420,8 @@ class Viaplay(object):
         stream['mpd_url'] = mpd_url
         stream['license_url'] = data['_links']['viaplay:license']['href']
         stream['release_pid'] = data['_links']['viaplay:license']['releasePid']
+        stream['sid'] = data['cseReporting']['sessionGuid']
+        stream['guid'] = guid.split('-')[0]
         if 'viaplay:sami' in data['_links']:
             #stream['subtitles'] = [x['href'] for x in data['_links']['viaplay:sami']]
             for subs in data['_links']['viaplay:sami']:
@@ -601,7 +603,9 @@ class Viaplay(object):
         start_time_obj = self.parse_datetime(start_time).replace(tzinfo=None)
         end_time_obj = self.parse_datetime(end_time).replace(tzinfo=None)
 
-        if 'isLive' in data['system']['flags']:
+        if 'nobroadcast' in data['system']['flags']:
+            status = 'nobroadcast'
+        elif 'isLive' in data['system']['flags']:
             status = 'live'
         elif now >= start_time_obj and now < end_time_obj:
             status = 'live'

@@ -14,10 +14,10 @@ import inputstreamhelper
 from xbmcaddon import Addon
 
 try:
-    from urllib.parse import unquote
+    from urllib.parse import unquote, urlencode
 except ImportError:
     import urllib
-    from urllib import unquote
+    from urllib import unquote, urlencode
 
 class KodiHelper(object):
     def __init__(self, base_url=None, handle=None):
@@ -362,10 +362,18 @@ class KodiHelper(object):
                     return
             else:
                 raise
-
+        
+        CMCD='cid="'+stream['guid']+'",ot=m,sf=d,sid="'+stream['sid']+'",su'
+        stream_url=stream['mpd_url']+'&CMCD='+CMCD
+        CMCD='cid="'+stream['guid']+'",mtp=1000,ot=k,sf=d,sid="'+stream['sid']+'"'
+        lic_url=stream['license_url']+'&CMCD='+CMCD
+        hea_lic={
+            'Content-Type':''
+        }
+        
         ia_helper = inputstreamhelper.Helper('mpd', drm='widevine')
         if ia_helper.check_inputstream():
-            playitem = xbmcgui.ListItem(path=stream['mpd_url'])
+            playitem = xbmcgui.ListItem(path=stream_url)
             playitem.setContentLookup(False)
             playitem.setMimeType('application/xml+dash')  # prevents HEAD request that causes 404 error
             if sys.version_info[0] > 2:
@@ -375,7 +383,7 @@ class KodiHelper(object):
             playitem.setProperty('inputstream.adaptive.manifest_type', 'mpd')
             playitem.setProperty('inputstream.adaptive.manifest_update_parameter', 'full')
             playitem.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-            playitem.setProperty('inputstream.adaptive.license_key',stream['license_url'].replace('{widevineChallenge}', 'B{SSM}') + '|||JBlicense')
+            playitem.setProperty('inputstream.adaptive.license_key','%s|%s|R{SSM}|'%(lic_url,urlencode(hea_lic)))
             if self.get_setting('subtitles') and 'subtitles' in stream:
                 playitem.setSubtitles(self.vp.download_subtitles(stream['subtitles']))
             xbmcplugin.setResolvedUrl(self.handle, True, listitem=playitem)

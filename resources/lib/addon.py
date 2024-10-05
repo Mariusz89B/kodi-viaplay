@@ -67,7 +67,7 @@ else:
 def get_sql_source():
     kodi_version = xbmc.getInfoLabel('System.BuildVersion')[:2]
 
-    kodi_list = [('18', '116'), ('19', '119'), ('20', '121'), ('21', '121')]
+    kodi_list = [('18', '116'), ('19', '119'), ('20', '121'), ('21', '131'), ('22', '133')]
 
     for k in kodi_list:
         if k[0] == kodi_version:
@@ -380,11 +380,12 @@ def root():
                 helper.add_item(name, plugin.url_for(profiles), art=avatar)
 
     sorted_json = sorted(pages, key=lambda x: x['name'] == 'viaplay:logout')
-
+    
+    hrefs=[]
     for page in sorted_json:
         page['title'] = capitalize(page['title'])
 
-        if page['name'] in supported_pages:
+        if page['name'] in supported_pages and page['href'] not in hrefs:
             art = None
             if page['name'] == 'viaplay:root':
                 art = {'icon': root_icon}
@@ -410,10 +411,13 @@ def root():
                 art = {'icon': tv_icon}
 
             helper.add_item(page['title'], plugin.url_for(supported_pages[page['name']], url=page['href']), art=art)
-        elif 'type' in page and page['type'] in supported_pages:  # weird channels listing fix on some subscriptions
+            hrefs.append(page['href'])
+        elif 'type' in page and page['type'] in supported_pages  and page['href'] not in hrefs:  # weird channels listing fix on some subscriptions
             helper.add_item(page['title'], plugin.url_for(supported_pages[page['type']], url=page['href']))
-        else:
+            hrefs.append(page['href'])
+        elif page['href'] not in hrefs:
             helper.log('Unsupported page found: %s' % page['name'])
+            hrefs.append(page['href'])
 
     helper.eod()
 
@@ -592,7 +596,7 @@ def channels():
         current_program_title = coloring(helper.language(30049), 'no_broadcast')
 
         for index, program in enumerate(channel['_embedded']['viaplay:products']):  # get current live program
-            if index > 0:
+            if index >= 0:
                 if helper.vp.get_event_status(program) in ['live', 'archive', 'upcoming']:
                     if program.get('content'):
                         current_program_title = coloring(program['content']['title'], 'live')
@@ -721,7 +725,7 @@ def capitalize(string):
     return string[0].upper()+string[1:]
 
 def add_movie(movie, site):
-    #print('Category: add_movie')
+
     if movie['system'].get('guid'):
         url = None
         guid = movie['system']['guid']
@@ -769,7 +773,7 @@ def add_movie(movie, site):
                     site=site, content='movies', playable=True, properties=properties, context=True)
 
 def add_series(show, site):
-    #print('Category: add_series')
+
     plugin_url = plugin.url_for(seasons_page, url=show['_links']['viaplay:page']['href'])
 
     details = show['content']
@@ -800,7 +804,7 @@ def add_series(show, site):
 
 
 def add_episode(episode, site):
-    #print('Category: add_episode')
+
     plugin_url = plugin.url_for(play, guid=episode['system']['guid'], url=None, tve='false')
 
     details = episode['content']
@@ -847,7 +851,7 @@ def add_episode(episode, site):
 
 
 def add_sports_event(event, site):
-    #print('Category: add_sports_event')
+
     now = datetime.now()
     date_today = now.date()
     event_date = helper.vp.parse_datetime(event['epg']['start'], localize=True)
@@ -909,7 +913,7 @@ def add_sports_event(event, site):
 
 
 def add_sports_series(event, site):
-    #print('Category: add_sports_series')
+
     now = datetime.now()
     date_today = now.date()
     if event.get('epg'):
@@ -970,7 +974,7 @@ def add_sports_series(event, site):
 
 
 def add_tv_event(event, site):
-    #print('Category: add_tv_event')
+
     now = datetime.now()
     date_today = now.date()
 
@@ -1029,7 +1033,7 @@ def add_tv_event(event, site):
         helper.add_item(event_info['title'], plugin_url, playable=playable, info=event_info, art=art, sys_guid=event['system']['guid'], site=site, content='episodes', context=True)
 
 def add_event(event, site):
-    #print('Category: add_event')
+
     plugin_url = plugin.url_for(play, guid=event['system']['guid'], url=None, tve='false')
 
     details = event['content']
